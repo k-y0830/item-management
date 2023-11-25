@@ -11,6 +11,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
+                    <!-- TODO: search ※複数検索 -->
                     <h3 class="card-title">商品一覧</h3>
                     <div class="card-tools">
                         <div class="input-group input-group-sm">
@@ -28,6 +29,9 @@
                                 <th>名前</th>
                                 <th>種別</th>
                                 <th>詳細</th>
+                                <th>価格</th>
+                                <th>在庫数</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,6 +41,9 @@
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->type }}</td>
                                     <td>{{ $item->detail }}</td>
+                                    <td>{{ $item->price }}</td>
+                                    <td>{{ $item->stock }}</td>
+                                    <td><a href="{{ url('items/edit').$item->id }}">編集</a></td>
                                 </tr>
                             @endforeach
                         </tbody>

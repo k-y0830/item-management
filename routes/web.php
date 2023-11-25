@@ -19,10 +19,20 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::prefix('items')->group(function () {
+// ログイン必須のルート
+Route::group(['middleware' => ['auth']], function () {
+    // Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/', [App\Http\Controllers\ItemController::class, 'index']);
-    Route::get('/add', [App\Http\Controllers\ItemController::class, 'add']);
-    Route::post('/add', [App\Http\Controllers\ItemController::class, 'add']);
+
+    Route::prefix('items')->group(function () {
+        Route::get('/', [App\Http\Controllers\ItemController::class, 'index']);
+        Route::get('/add', [App\Http\Controllers\ItemController::class, 'add']);
+        Route::post('/add', [App\Http\Controllers\ItemController::class, 'add']);
+        // 取得したIDの編集ページ表示
+        Route::get('/edit{id}', [App\Http\Controllers\ItemController::class, 'edit']);
+        // 取得したIDの商品編集
+        Route::post('/edit{id}', [App\Http\Controllers\ItemController::class, 'editregister']);
+    });
 });
+
+

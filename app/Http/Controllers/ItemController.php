@@ -47,11 +47,47 @@ class ItemController extends Controller
                 'name' => $request->name,
                 'type' => $request->type,
                 'detail' => $request->detail,
+                'price' => $request->price,
+                'stock' => $request->stock,
             ]);
 
             return redirect('/items');
         }
 
         return view('item.add');
+    }
+
+    /**
+     * 編集ページ表示
+     */
+    public function edit($id)
+    {
+        $item = Item::where('id', '=', $id)->first();
+
+        return view('item.edit')->with([
+            'item' => $item,
+        ]);
+    }
+
+    /**
+     * 編集登録
+     */
+    public function editregister(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required',
+            'price' => 'integer',
+            'stock' => 'integer',
+        ]);
+
+        $item = Item::where('id', '=', $id)->first();
+        $item->name = $request->name;
+        $item->type = $request->type;
+        $item->detail = $request->detail;
+        $item->price = $request->price;
+        $item->stock = $request->stock;
+        $item->save();
+
+        return redirect('/items');
     }
 }
