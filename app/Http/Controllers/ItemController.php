@@ -90,4 +90,15 @@ class ItemController extends Controller
 
         return redirect('/items');
     }
+
+    /**
+     * 削除
+     */
+    public function delete(Request $request, $id)
+    {
+        $item = Item::where('id', '=', $id)->first();
+        $item->delete();
+
+        return redirect('/items');
+    }
 }

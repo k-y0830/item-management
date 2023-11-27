@@ -32,6 +32,7 @@
                                 <th>価格</th>
                                 <th>在庫数</th>
                                 <th>&nbsp;</th>
+                                <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -43,7 +44,17 @@
                                     <td>{{ $item->detail }}</td>
                                     <td>{{ $item->price }}</td>
                                     <td>{{ $item->stock }}</td>
-                                    <td><a href="{{ url('items/edit').$item->id }}">編集</a></td>
+                                    <td>
+                                        <a href="{{ url('items/edit').$item->id }}">
+                                            <button class="btn btn-default">編集</button>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <form action="{{ url('/items/delete').$item->id }}" method="post">
+                                            @csrf
+                                            <button type="submit" class="btn btn-default">削除</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

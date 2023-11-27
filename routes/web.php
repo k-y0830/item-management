@@ -32,6 +32,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/edit{id}', [App\Http\Controllers\ItemController::class, 'edit']);
         // 取得したIDの商品編集
         Route::post('/edit{id}', [App\Http\Controllers\ItemController::class, 'editregister']);
+        // 削除
+        Route::post('/delete{id}', [App\Http\Controllers\ItemController::class, 'delete']);
     });
 });
 

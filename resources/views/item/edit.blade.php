@@ -52,8 +52,6 @@
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">登録</button>
                     </div>
-
-                    <!-- TODO: delete -->
                 </form>
             </div>
         </div>
