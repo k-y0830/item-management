@@ -25,7 +25,7 @@
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <!-- <th>ID</th> -->
                                 <th>名前</th>
                                 <th>種別</th>
                                 <th>詳細</th>
@@ -38,7 +38,7 @@
                         <tbody>
                             @foreach ($items as $item)
                                 <tr>
-                                    <td>{{ $item->id }}</td>
+                                    <!-- <td>{{ $item->id }}</td> -->
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->type }}</td>
                                     <td>{{ $item->detail }}</td>
@@ -50,9 +50,9 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <form action="{{ url('/items/delete').$item->id }}" method="post">
+                                        <form action="{{ url('/items/delete').$item->id }}" method="post" onsubmit="return window.confirm('削除しますか？')">
                                             @csrf
-                                            <button type="submit" class="btn btn-default">削除</button>
+                                            <button type="submit" class="btn btn-default" id="deletebtn">削除</button>
                                         </form>
                                     </td>
                                 </tr>

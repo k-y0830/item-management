@@ -76,8 +76,8 @@ class ItemController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'price' => 'integer',
-            'stock' => 'integer',
+            'price' => 'nullable|integer',
+            'stock' => 'nullable|integer',
         ]);
 
         $item = Item::where('id', '=', $id)->first();
