@@ -101,4 +101,29 @@ class ItemController extends Controller
 
         return redirect('/items');
     }
+
+    /**
+     * 複数検索
+     * 参考サイト:https://qiita.com/rentarouclass/items/23393b172f564290224f
+     */
+    public function search(Request $request)
+    {
+        $query = Item::query();
+        if (!empty($request->input('keyword'))) {
+            $search_split = mb_convert_kana($request->input('keyword'), 's');
+            $search_split2 = preg_split('/[\s]+/', $search_split);
+            foreach ($search_split2 as $keyword) {
+                $query->Where('name', 'LIKE', "%$keyword%")
+                ->orwhere('type', 'LIKE', "%$keyword%")
+                ->orwhere('detail', 'LIKE', "%$keyword%")
+                ->orwhere('price', 'LIKE', "%$keyword%")
+                ->orwhere('stock', 'LIKE', "%$keyword%");
+            }
+        }
+
+        $items = $query->get();
+        return view('item.index')->with([
+                'items' => $items,
+            ]);
+    }
 }

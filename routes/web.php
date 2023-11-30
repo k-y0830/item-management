@@ -34,7 +34,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/edit{id}', [App\Http\Controllers\ItemController::class, 'editregister']);
         // 削除
         Route::post('/delete{id}', [App\Http\Controllers\ItemController::class, 'delete']);
-    });
+        // 複数検索
+        Route::get('/search', [App\Http\Controllers\ItemController::class, 'search']);
 });
 
-
+});
