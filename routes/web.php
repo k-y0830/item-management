@@ -24,6 +24,7 @@ Route::group(['middleware' => ['auth']], function () {
     // Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/', [App\Http\Controllers\ItemController::class, 'index']);
 
+    // items
     Route::prefix('items')->group(function () {
         Route::get('/', [App\Http\Controllers\ItemController::class, 'index']);
         Route::get('/add', [App\Http\Controllers\ItemController::class, 'add']);
@@ -36,6 +37,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/delete{id}', [App\Http\Controllers\ItemController::class, 'delete']);
         // 複数検索
         Route::get('/search', [App\Http\Controllers\ItemController::class, 'search']);
-});
+    });
+
+    // type
+    Route::prefix('type')->group(function () {
+        Route::get('/', [App\Http\Controllers\TypeController::class, 'index']);
+    });
 
 });

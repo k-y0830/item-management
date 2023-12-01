@@ -13,13 +13,13 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title"></h3>
-                        <div class="card-tools">
-                            <div class="input-group input-group-sm">
-                                <div class="input-group-append">
-                                    <form action="{{ url('items/search') }}" method="GET">
+                        <div class="searchcard-tools">
+                            <div class="searchinput-group">
+                                <div class="searchinput-group-append">
+                                    <form action="{{ url('items/search') }}" method="GET" class="search-form">
                                         @csrf
-                                        <input type="search" name="keyword" placeholder="キーワード    複数検索可" class="searchbox">
-                                        <button type="submit" class="btn btn-default">検索</button>
+                                        <input type="search" name="keyword" placeholder="キーワード    複数検索可" class="search-box">
+                                        <button type="submit" class="btn btn-default search-btn">検索</button>
                                     </form>
                                 </div>
                             </div>
@@ -56,10 +56,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- TODO:IF文追加 -->
-                                <!-- @if (!isset($items))
-                                    <h3>登録商品なし</h3>
-                                @else -->
                                 @foreach ($items as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
@@ -81,7 +77,6 @@
                                         </td>
                                     </tr>
                                 @endforeach
-                                <!-- @endif -->
                             </tbody>
                         </table>
                     </div>
@@ -92,10 +87,27 @@
 
 @section('css')
 <style>
-    /* TODO:メディアスクリーン */
-    .searchbox{
-        width: 800px;
-        margin-right: 100px;
+    .searchcard-tools {
+        width: 100%;
+    }
+    .searchinput-group {
+        width: 100%;
+    }
+    .searchinput-group-append {
+        width: 100%;
+    }
+    .search-box {
+        display: inline-block;
+        width: 75%;
+        padding: 0.5em;
+        border: 1px solid #999;
+        box-sizing: border-box;
+        background: #f2f2f2;
+        margin: 0.5em;
+    }
+    .search-btn {
+        float: right;
+        margin-top: 0.8em;
     }
 </style>
 @stop
