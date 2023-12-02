@@ -54,6 +54,18 @@ class TypeController extends Controller
     }
 
     /**
+     * 編集ページ表示
+     */
+    public function edit($id)
+    {
+        $type = Type::where('id', '=', $id)->first();
+
+        return view('type.edit')->with([
+            'type' => $type,
+        ]);
+    }
+
+    /**
      * 編集登録
      */
     public function editregister(Request $request, $id)
@@ -78,5 +90,26 @@ class TypeController extends Controller
         $type->delete();
 
         return redirect('/type');
+    }
+
+    /**
+     * 検索
+     */
+    public function search(Request $request)
+    {
+        $query = Type::query();
+        if (!empty($request->input('keyword'))) {
+            $search_split = mb_convert_kana($request->input('keyword'), 's');
+            $search_split2 = preg_split('/[\s]+/', $search_split);
+            foreach ($search_split2 as $keyword) {
+                $query->Where('name', 'LIKE', "%$keyword%");
+            }
+        }
+
+        $type = $query->get();
+
+        return view('type.index')->with([
+                'type' => $type,
+            ]);
     }
 }

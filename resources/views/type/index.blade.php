@@ -16,7 +16,7 @@
                     <div class="searchcard-tools">
                         <div class="searchinput-group">
                             <div class="searchinput-group-append">
-                                <form action="{{ url('items/search') }}" method="GET" class="search-form">
+                                <form action="{{ url('type/search') }}" method="GET" class="search-form">
                                     @csrf
                                     <input type="search" name="keyword" placeholder="キーワード    複数検索可" class="search-box">
                                     <button type="submit" class="btn btn-default search-btn">検索</button>
@@ -51,17 +51,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($type as $item)
+                            @foreach ($type as $type)
                                 <tr>
-                                    <td>{{ $item->id }}</td>
-                                    <td>{{ $item->name }}</td>
+                                    <td>{{ $type->id }}</td>
+                                    <td>{{ $type->name }}</td>
                                     <td>
-                                        <a href="{{ url('type/edit').$item->id }}">
+                                        <a href="{{ url('type/edit').$type->id }}">
                                             <button class="btn btn-default">編集</button>
                                         </a>
                                     </td>
                                     <td>
-                                        <form action="{{ url('/type/delete').$item->id }}" method="post" onsubmit="return window.confirm('削除しますか？')">
+                                        <form action="{{ url('/type/delete').$type->id }}" method="post" onsubmit="return window.confirm('削除しますか？')">
                                             @csrf
                                             <button type="submit" class="btn btn-default" id="deletebtn">削除</button>
                                         </form>

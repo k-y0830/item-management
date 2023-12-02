@@ -28,9 +28,14 @@
                             <input type="text" class="form-control" id="name" name="name" placeholder="名前">
                         </div>
 
+                        <!-- 種別一覧でforeach -->
                         <div class="form-group">
-                            <label for="type">種別</label>
-                            <input type="text" class="form-control" id="type" name="type" placeholder="種別">
+                            <label for="type">種別</label><br>
+                                <select name="type_id" class="form-control">
+                                @foreach($type as $type)
+                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                @endforeach
+                                </select>
                         </div>
 
                         <div class="form-group">
