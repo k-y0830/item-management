@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
 use App\Models\Type;
+use Exception;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Carbon\Carbon;
 
 class ItemController extends Controller
 {
@@ -142,5 +147,100 @@ class ItemController extends Controller
         return view('item.index')->with([
                 'items' => $items,
             ]);
+    }
+
+    /**
+     * CSVインポート
+     * 参考サイト：https://qiita.com/niconiconainu/items/bc8d0278bee99ae1f2ec
+     */
+    public function inport(Request $request)
+    {
+        $item = new Item();
+        // CSVファイルが存在するかの確認
+        if ($request->hasFile('csvFile')) {
+            //拡張子がCSVであるかの確認
+            if ($request->csvFile->getClientOriginalExtension() !== "csv") {
+                throw new Exception('不適切な拡張子です。');
+            }
+            //ファイルの保存
+            $newCsvFileName = $request->csvFile->getClientOriginalName();
+            $request->csvFile->storeAs('public/csv', $newCsvFileName);
+        } else {
+            throw new Exception('CSVファイルの取得に失敗しました。');
+        }
+        //保存したCSVファイルの取得
+        $csv = Storage::disk('local')->get("public/csv/{$newCsvFileName}");
+        // OS間やファイルで違う改行コードをexplode統一
+        $csv = str_replace(array("\r\n", "\r"), "\n", $csv);
+        // $csvを元に行単位のコレクション作成。explodeで改行ごとに分解
+        $uploadedData = collect(explode("\n", $csv));
+
+        // テーブルとCSVファイルのヘッダーの比較
+        $header = collect($item->csvHeader());
+        $uploadedHeader = collect(explode(",", $uploadedData->shift()));
+        if ($header->count() !== $uploadedHeader->count()) {
+            throw new Exception('Error:ヘッダーが一致しません');
+        }
+
+        // 連想配列のコレクションを作成
+        //combine 一方の配列をキー、もう一方を値として一つの配列生成。haederをキーとして、一つ一つの$oneRecordと組み合わせて、連想配列のコレクション作成
+        try {
+            $items = $uploadedData->map(fn($oneRecord) => $header->combine(collect(explode(",", $oneRecord))));
+        } catch (Exception $e) {
+            throw new Exception('Error:ヘッダーが一致しません');
+        }
+
+        // アップロードしたCSVファイル内での重複チェック
+        if ($items->duplicates("id")->count() > 0) {
+            throw new Exception("Error:idの重複:" . $items->duplicates("id")->shift());
+        }
+
+        // 既存データとの重複チェック.pluckでDBに挿入したい$itemsのidのみ抽出
+        $duplicateItem = DB::table('items')->whereIn('id', $items->pluck('id'));
+        if ($duplicateItem->count() > 0) {
+            throw new Exception("Error:idの重複:" . $duplicateItem->shift()->id);
+        }
+
+        // $itemsコレクションを配列にして、一括挿入
+        DB::table('items')->insert($items->toArray());
+    }
+
+    /**
+     * CSVエクスポート
+     * 参考サイト：https://your-school.jp/laravel-csv-download/293/
+     */
+    public function export(Request $request)
+    {
+        $items = Item::all();
+        $now = Carbon::now();
+        $csvHeader = [
+            'id',
+            'ユーザー',
+            '名前',
+            '種別',
+            '詳細',
+            '価格',
+            '在庫数',
+            '登録日',
+            '更新日',
+        ];
+        $csvData = $items->toArray();
+
+        $response = new StreamedResponse(function () use ($csvHeader, $csvData) {
+            $handle = fopen('php://output', 'w');
+            // 文字コードを変換して、文字化け回避
+            stream_filter_prepend($handle, 'convert.iconv.utf-8/cp932//TRANSLIT');
+
+            fputcsv($handle, $csvHeader);
+
+            foreach ($csvData as $row) {
+                fputcsv($handle, $row);
+            }
+            fclose($handle);
+        }, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename='.$now->format('YmdHis').'.csv',
+        ]);
+        return $response;
     }
 }

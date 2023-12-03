@@ -37,6 +37,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/delete{id}', [App\Http\Controllers\ItemController::class, 'delete']);
         // 複数検索
         Route::get('/search', [App\Http\Controllers\ItemController::class, 'search']);
+        // csv
+        Route::post('/inport', [App\Http\Controllers\ItemController::class, 'inport']);
+        Route::get('/export', [App\Http\Controllers\ItemController::class, 'export']);
     });
 
     // type
@@ -52,6 +55,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/delete{id}', [App\Http\Controllers\TypeController::class, 'delete']);
         // 検索
         Route::get('/search', [App\Http\Controllers\TypeController::class, 'search']);
+        // csv
+        Route::post('/inport', [App\Http\Controllers\TypeController::class, 'inport']);
+        Route::get('/export', [App\Http\Controllers\TypeController::class, 'export']);
     });
 
     // company
@@ -67,6 +73,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/delete{id}', [App\Http\Controllers\CompanyController::class, 'delete']);
         // 検索
         Route::get('/search', [App\Http\Controllers\CompanyController::class, 'search']);
+        // csv
+        Route::post('/inport', [App\Http\Controllers\CompanyController::class, 'inport']);
+        Route::get('/export', [App\Http\Controllers\CompanyController::class, 'export']);
     });
 
 });

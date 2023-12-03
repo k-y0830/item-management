@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Carbon\Carbon;
 
 class CompanyController extends Controller
 {
@@ -117,5 +119,41 @@ class CompanyController extends Controller
         return view('company.index')->with([
                 'company' => $company,
             ]);
+    }
+
+    /**
+     * CSVエクスポート
+     * 参考サイト：https://your-school.jp/laravel-csv-download/293/
+     */
+    public function export(Request $request)
+    {
+        $items = Company::all();
+        $now = Carbon::now();
+        $csvHeader = [
+            'id',
+            '名前',
+            '住所',
+            '電話番号',
+            '登録日',
+            '更新日',
+        ];
+        $csvData = $items->toArray();
+
+        $response = new StreamedResponse(function () use ($csvHeader, $csvData) {
+            $handle = fopen('php://output', 'w');
+            // 文字コードを変換して、文字化け回避
+            stream_filter_prepend($handle, 'convert.iconv.utf-8/cp932//TRANSLIT');
+
+            fputcsv($handle, $csvHeader);
+
+            foreach ($csvData as $row) {
+                fputcsv($handle, $row);
+            }
+            fclose($handle);
+        }, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename='.$now->format('YmdHis').'.csv',
+        ]);
+        return $response;
     }
 }

@@ -27,6 +27,10 @@
                 </div>
             </div>
         </div>
+        <!-- CSV -->
+        <form method="GET" action="{{ url('company/export') }}" class="export-btn">
+            <button type="submit" class="btn btn-default">CSVダウンロード</button>
+        </form>
         <!-- 業者一覧 -->
         <div class="col-12">
             <div class="card">
@@ -103,6 +107,11 @@
     .search-btn {
         float: right;
         margin-top: 0.8em;
+    }
+    .export-btn {
+        float: right;
+        margin-left: auto;
+        padding-bottom: 0.5em;
     }
 </style>
 @stop

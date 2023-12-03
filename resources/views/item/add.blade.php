@@ -19,6 +19,20 @@
                 </div>
             @endif
 
+            <!-- CSVinport -->
+            <div class="card card-primary">
+                <form action="{{ url('items/inport') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label name="csvFile">CSVファイル</label>
+                            <input type="file" name="csvFile" class="" id="csvFile">
+                            <input type="submit">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             <div class="card card-primary">
                 <form method="POST">
                     @csrf
