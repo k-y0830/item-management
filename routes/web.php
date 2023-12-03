@@ -54,4 +54,19 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/search', [App\Http\Controllers\TypeController::class, 'search']);
     });
 
+    // company
+    Route::prefix('company')->group(function () {
+        Route::get('/', [App\Http\Controllers\CompanyController::class, 'index']);
+        Route::get('/add', [App\Http\Controllers\CompanyController::class, 'add']);
+        Route::post('/add', [App\Http\Controllers\CompanyController::class, 'add']);
+        // 取得したIDの編集ページ表示
+        Route::get('/edit{id}', [App\Http\Controllers\CompanyController::class, 'edit']);
+        // 取得したIDの種別編集
+        Route::post('/edit{id}', [App\Http\Controllers\CompanyController::class, 'editregister']);
+        // 削除
+        Route::post('/delete{id}', [App\Http\Controllers\CompanyController::class, 'delete']);
+        // 検索
+        Route::get('/search', [App\Http\Controllers\CompanyController::class, 'search']);
+    });
+
 });

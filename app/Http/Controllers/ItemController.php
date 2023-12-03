@@ -26,7 +26,7 @@ class ItemController extends Controller
     {
         // 商品一覧取得
         $items = Item::all();
-
+        // dd($items[0]->type);
         return view('item.index')->with([
             'items' => $items,
         ]);
@@ -40,7 +40,7 @@ class ItemController extends Controller
         $type = Type::all();
         if (count($type) == 0) {
             return view('type.add');
-        }
+        } else
 
         // POSTリクエストのとき
         if ($request->isMethod('post')) {

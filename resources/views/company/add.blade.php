@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', '商品登録')
+@section('title', '業者登録')
 
 @section('content_header')
-    <h1>商品登録</h1>
+    <h1>業者登録</h1>
 @stop
 
 @section('content')
@@ -27,33 +27,14 @@
                             <label for="name">名前</label>
                             <input type="text" class="form-control" id="name" name="name" placeholder="名前">
                         </div>
-
-                        <!-- 種別一覧でforeach -->
                         <div class="form-group">
-                            <label for="type">種別</label><br>
-                                <select name="type_id" class="form-control">
-                                @foreach($type as $type)
-                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                @endforeach
-                                </select>
+                            <label for="address">住所</label>
+                            <input type="text" class="form-control" id="address" name="address" placeholder="住所">
                         </div>
-
                         <div class="form-group">
-                            <label for="detail">詳細</label>
-                            <input type="text" class="form-control" id="detail" name="detail" placeholder="詳細説明">
+                            <label for="tell">電話番号</label>
+                            <input type="text" class="form-control" id="tell" name="tell" placeholder="電話番号">
                         </div>
-
-                        <div class="form-group">
-                            <label for="price">価格</label>
-                            <input type="text" class="form-control" id="price" name="price" placeholder="価格">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="stock">在庫数</label>
-                            <input type="text" class="form-control" id="stock" name="stock" placeholder="在庫数">
-                        </div>
-                    </div>
-
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">登録</button>
                     </div>
