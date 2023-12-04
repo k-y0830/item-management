@@ -54,4 +54,33 @@ class Item extends Model
     public function company() {
         return $this->belongsTo(Company::class);
     }
+
+    public function csvHeader(): array
+    {
+        return [
+            'id',
+            'name',
+            'type_id',
+            'detail',
+            'price',
+            'stock',
+        ];
+    }
+
+    public function getCsvData(): \Illuminate\Support\Collection
+    {
+        $data = DB::table('items')->get();
+        return $data;
+    }
+    public function insertRow($row): array
+    {
+        return [
+            $row->id,
+            $row->name,
+            $row->type_id,
+            $row->detail,
+            $row->price,
+            $row->stock,
+        ];
+    }
 }

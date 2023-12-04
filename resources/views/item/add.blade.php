@@ -21,7 +21,7 @@
 
             <!-- CSVinport -->
             <div class="card card-primary">
-                <form action="{{ url('items/inport') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ url('items/import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="form-group">

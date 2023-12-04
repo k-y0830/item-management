@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
 use App\Models\Type;
-use Exception;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
+use Exception;
+use Goodby\CSV\Import\Standard\LexerConfig;
+use Goodby\CSV\Import\Standard\Lexer;
+use Goodby\CSV\Import\Standard\Interpreter;
 
 class ItemController extends Controller
 {
@@ -153,7 +156,7 @@ class ItemController extends Controller
      * CSVインポート
      * 参考サイト：https://qiita.com/niconiconainu/items/bc8d0278bee99ae1f2ec
      */
-    public function inport(Request $request)
+    public function import(Request $request)
     {
         $item = new Item();
         // CSVファイルが存在するかの確認
@@ -174,14 +177,14 @@ class ItemController extends Controller
         $csv = str_replace(array("\r\n", "\r"), "\n", $csv);
         // $csvを元に行単位のコレクション作成。explodeで改行ごとに分解
         $uploadedData = collect(explode("\n", $csv));
-
+        $uploadedData->pop();
         // テーブルとCSVファイルのヘッダーの比較
         $header = collect($item->csvHeader());
         $uploadedHeader = collect(explode(",", $uploadedData->shift()));
         if ($header->count() !== $uploadedHeader->count()) {
             throw new Exception('Error:ヘッダーが一致しません');
         }
-
+        // dd($uploadedData);
         // 連想配列のコレクションを作成
         //combine 一方の配列をキー、もう一方を値として一つの配列生成。haederをキーとして、一つ一つの$oneRecordと組み合わせて、連想配列のコレクション作成
         try {
@@ -196,14 +199,32 @@ class ItemController extends Controller
         }
 
         // 既存データとの重複チェック.pluckでDBに挿入したい$itemsのidのみ抽出
-        $duplicateItem = DB::table('items')->whereIn('id', $items->pluck('id'));
+        $duplicateItem = DB::table('items')->whereIn('id', $items->pluck('id'))->get();
+        // dd($duplicateItem);
         if ($duplicateItem->count() > 0) {
             throw new Exception("Error:idの重複:" . $duplicateItem->shift()->id);
         }
-
+        // dd($items);
         // $itemsコレクションを配列にして、一括挿入
-        DB::table('items')->insert($items->toArray());
+        // DB::table('items')->insert($items->toArray());
+
+        foreach ($items as $item) {
+            // dd($item);
+            $i = new Item();
+            $i->user_id = Auth::id();
+            $i->name = $item['name'];
+            $i->type_id = $item['type_id'];
+            $i->detail = $item['detail'];
+            $i->price = $item['price'];
+            $i->stock = $item['stock'];
+            $i->save();
+        }
     }
+
+    // public function import(Request $request)
+    // {
+    //     // https://blog.capilano-fw.com/?p=5022
+    // }
 
     /**
      * CSVエクスポート
