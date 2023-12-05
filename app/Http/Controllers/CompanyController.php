@@ -24,11 +24,29 @@ class CompanyController extends Controller
     /**
      * 業者一覧
      */
-    public function index()
+    public function index(Request $request)
     {
-        $company = Company::all();
+        $pag_list = [
+            0 => '',
+            1 => '5',
+            2 => '10',
+            3 => '100',
+            4 => '200',
+        ];
 
-        return view('company.index', compact('company'));
+        $disp_list = $request->disp_list;
+
+        if(empty($disp_list)) { // disp_list= が空値、またはURLになかった場合
+            $disp_list = 5; // デフォルトの表示件数をセット
+        }
+
+        $company = Company::paginate($disp_list);
+
+        return view('company.index')->with([
+            'company' => $company,
+            'pag_list' => $pag_list,
+            'disp_list' => $disp_list,
+        ]);
     }
 
     /**

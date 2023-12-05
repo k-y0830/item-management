@@ -57,17 +57,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($type as $type)
+                            @foreach ($type as $val)
                                 <tr>
-                                    <td>{{ $type->id }}</td>
-                                    <td>{{ $type->name }}</td>
+                                    <td>{{ $val->id }}</td>
+                                    <td>{{ $val->name }}</td>
                                     <td>
-                                        <a href="{{ url('type/edit').$type->id }}">
+                                        <a href="{{ url('type/edit').$val->id }}">
                                             <button class="btn btn-default">編集</button>
                                         </a>
                                     </td>
                                     <td>
-                                        <form action="{{ url('/type/delete').$type->id }}" method="post" onsubmit="return window.confirm('削除しますか？')">
+                                        <form action="{{ url('/type/delete').$val->id }}" method="post" onsubmit="return window.confirm('削除しますか？')">
                                             @csrf
                                             <button type="submit" class="btn btn-default" id="deletebtn">削除</button>
                                         </form>
@@ -79,6 +79,36 @@
                 </div>
             </div>
         </div>
+
+       <!-- 件数表示 -->
+       <div class="number-form-group">
+                <div class="number-count mb-2 xl:w-66">
+                @if (count($type) >0)
+                    <p>全{{ $type->total() }}件中 
+                        {{  ($type->currentPage() -1) * $type->perPage() + 1}} - 
+                        {{ (($type->currentPage() -1) * $type->perPage() + 1) + (count($type) -1)  }}件
+                    </p>
+                @else
+                    <p>データがありません。</p>
+                @endif 
+                    <form action="{{ url('type') }}" method="get" class="number-select">
+                        <label data-te-select-label-ref>表示件数：</label>
+                        <select data-te-select-init  id="disp_list" name="disp_list" value="{{ old('disp_list') }}" onchange="submit();">
+                            @foreach($pag_list as $key => $val)
+                                @if ($val === $disp_list)
+                                    <option value="{{ $val }}" selected >{{ $val }}</option>
+                                @else
+                                    <option value="{{ $val }}">{{ $val }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+            </div>
+            <div class="page">
+                {{ $type->appends(request()->query())->links() }}
+            </div>
+
     </div>
 @stop
 
@@ -110,6 +140,28 @@
         float: right;
         margin-left: auto;
         padding-bottom: 0.5em;
+    }
+    .number-form-group {
+        width: 100%;
+        display: flex;
+    }
+    .number-count {
+        width: 100%;
+        display: flex;
+    }
+    .number-count p {
+        margin-left: 0.5em;
+    }
+    .number-select {
+        float: right;
+        margin-left: auto;
+        margin-right: 0.5em;
+        padding-bottom: 0.5em;
+    }
+    .page {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
     }
 </style>
 @stop

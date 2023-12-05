@@ -11,9 +11,6 @@ use App\Models\Type;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
 use Exception;
-use Goodby\CSV\Import\Standard\LexerConfig;
-use Goodby\CSV\Import\Standard\Lexer;
-use Goodby\CSV\Import\Standard\Interpreter;
 
 class ItemController extends Controller
 {
@@ -52,8 +49,8 @@ class ItemController extends Controller
         // dd($items[0]->type);
         return view('item.index')->with([
             'items' => $items,
-            'pag_list'=>$pag_list,
-            'disp_list'=>$disp_list,
+            'pag_list' => $pag_list,
+            'disp_list' => $disp_list,
         ]);
     }
 

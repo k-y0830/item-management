@@ -24,12 +24,28 @@ class TypeController extends Controller
     /**
      * 種別一覧
      */
-    public function index()
+    public function index(Request $request)
     {
-        $type = Type::all();
+        $pag_list = [
+            0 => '',
+            1 => '5',
+            2 => '10',
+            3 => '100',
+            4 => '200',
+        ];
+
+        $disp_list = $request->disp_list;
+
+        if(empty($disp_list)) { // disp_list= が空値、またはURLになかった場合
+            $disp_list = 5; // デフォルトの表示件数をセット
+        }
+
+        $type = Type::paginate($disp_list);
 
         return view('type.index')->with([
             'type' => $type,
+            'pag_list' => $pag_list,
+            'disp_list' => $disp_list,
         ]);
     }
 
