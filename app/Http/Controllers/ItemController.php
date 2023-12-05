@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
 use App\Models\Type;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
 use Exception;
 
@@ -31,12 +30,11 @@ class ItemController extends Controller
     public function index(Request $request)
     {
         $pag_list = [
-            0 => '',
-            1 => '5',
-            2 => '10',
-            3 => '100',
-            4 => '200',
-        ];
+            0 => '5',
+            1 => '10',
+            2 => '100',
+            3 => '200',
+    ];
 
         $disp_list = $request->disp_list;
 
@@ -141,16 +139,15 @@ class ItemController extends Controller
 
     /**
      * 複数検索
-     * 参考サイト:https://qiita.com/rentarouclass/items/23393b172f564290224f
+     * 参考サイト:https://qiita.com/EasyCoder/items/83475abb6d6acb3a177f
      */
     public function search(Request $request)
     {
         $pag_list = [
-            0 => '',
-            1 => '5',
-            2 => '10',
-            3 => '100',
-            4 => '200',
+                0 => '5',
+                1 => '10',
+                2 => '100',
+                3 => '200',
         ];
 
         $disp_list = $request->disp_list;
@@ -159,27 +156,27 @@ class ItemController extends Controller
             $disp_list = 5; // デフォルトの表示件数をセット
         }
 
-        $query = Item::paginate($disp_list);
-        if (!empty($request->input('keyword'))) {
+        /* テーブルから全てのレコードを取得する */
+        $query = Item::query();
+
+        /* キーワードから検索処理 */
+        $keyword = $request->input('keyword');
+        if(!empty($keyword)) {
             $search_split = mb_convert_kana($request->input('keyword'), 's');
             $search_split2 = preg_split('/[\s]+/', $search_split);
             foreach ($search_split2 as $keyword) {
-                $query->Where('name', 'LIKE', "%$keyword%")
-                ->orwhere('detail', 'LIKE', "%$keyword%")
-                ->orwhere('price', 'LIKE', "%$keyword%")
-                ->orwhere('stock', 'LIKE', "%$keyword%")
-                ->orWhereHas('type', function ($query) use ($keyword){
-                    $query->where('name', 'LIKE', "%$keyword%");
-                });
+                $query->where('name', 'LIKE', "%{$keyword}%")
+                ->orwhere('detail', 'LIKE', "%{$keyword}%")
+                ->orwhereHas('type', function ($query) use ($keyword) {
+                    $query->where('name', 'LIKE', "%{$keyword}%");
+                })->get();
             }
         }
 
-        $items = $query->get();
-        return view('item.index')->with([
-                'items' => $items,
-                'pag_list'=>$pag_list,
-                'disp_list'=>$disp_list,
-            ]);
+        /* ページネーション */
+        $items = $query->paginate(5);
+
+        return view('item.index', ['items' => $items,'pag_list'=>$pag_list,'disp_list'=>$disp_list,]);
     }
 
     /**

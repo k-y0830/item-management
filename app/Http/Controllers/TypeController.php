@@ -27,11 +27,10 @@ class TypeController extends Controller
     public function index(Request $request)
     {
         $pag_list = [
-            0 => '',
-            1 => '5',
-            2 => '10',
-            3 => '100',
-            4 => '200',
+            0 => '5',
+            1 => '10',
+            2 => '100',
+            3 => '200',
         ];
 
         $disp_list = $request->disp_list;

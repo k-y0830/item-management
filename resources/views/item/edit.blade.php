@@ -57,7 +57,6 @@
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">登録</button>
                     </div>
-                </form>
             </div>
         </div>
     </div>
