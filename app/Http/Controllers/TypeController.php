@@ -28,7 +28,9 @@ class TypeController extends Controller
     {
         $type = Type::all();
 
-        return view('type.index', compact('type'));
+        return view('type.index')->with([
+            'type' => $type,
+        ]);
     }
 
     /**

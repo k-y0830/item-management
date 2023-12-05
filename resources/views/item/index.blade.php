@@ -87,6 +87,35 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 件数表示 -->
+            <div class="number-form-group">
+                <div class="number-count mb-2 xl:w-66">
+                @if (count($items) >0)
+                    <p>全{{ $items->total() }}件中 
+                        {{  ($items->currentPage() -1) * $items->perPage() + 1}} - 
+                        {{ (($items->currentPage() -1) * $items->perPage() + 1) + (count($items) -1)  }}件
+                    </p>
+                @else
+                    <p>データがありません。</p>
+                @endif 
+                    <form action="/" method="get" class="number-select">
+                        <label data-te-select-label-ref>表示件数：</label>
+                        <select data-te-select-init  id="disp_list" name="disp_list" value="{{ old('disp_list') }}" onchange="submit();">
+                            @foreach($pag_list as $key => $val)
+                                @if ($val === $disp_list)
+                                    <option value="{{ $val }}" selected >{{ $val }}</option>
+                                @else
+                                    <option value="{{ $val }}">{{ $val }}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </form>
+                </div>
+            </div>
+            <div class="page">
+                {{ $items->appends(request()->query())->links() }}
+            </div>
         </div>
 @stop
 
@@ -118,6 +147,28 @@
         float: right;
         margin-left: auto;
         padding-bottom: 0.5em;
+    }
+    .number-form-group {
+        width: 100%;
+        display: flex;
+    }
+    .number-count {
+        width: 100%;
+        display: flex;
+    }
+    .number-count p {
+        margin-left: 0.5em;
+    }
+    .number-select {
+        float: right;
+        margin-left: auto;
+        margin-right: 0.5em;
+        padding-bottom: 0.5em;
+    }
+    .page {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
     }
 </style>
 @stop

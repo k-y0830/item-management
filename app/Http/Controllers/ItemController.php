@@ -29,14 +29,31 @@ class ItemController extends Controller
 
     /**
      * 商品一覧
+     * ページネーション：https://qiita.com/dong5588/items/c1074fb5c608de6ed749
      */
-    public function index()
+    public function index(Request $request)
     {
+        $pag_list = [
+            0 => '',
+            1 => '5',
+            2 => '10',
+            3 => '100',
+            4 => '200',
+        ];
+
+        $disp_list = $request->disp_list;
+
+        if(empty($disp_list)) { // disp_list= が空値、またはURLになかった場合
+            $disp_list = 5; // デフォルトの表示件数をセット
+        }
+
         // 商品一覧取得
-        $items = Item::all();
+        $items = Item::paginate($disp_list);
         // dd($items[0]->type);
         return view('item.index')->with([
             'items' => $items,
+            'pag_list'=>$pag_list,
+            'disp_list'=>$disp_list,
         ]);
     }
 
@@ -131,7 +148,21 @@ class ItemController extends Controller
      */
     public function search(Request $request)
     {
-        $query = Item::query();
+        $pag_list = [
+            0 => '',
+            1 => '5',
+            2 => '10',
+            3 => '100',
+            4 => '200',
+        ];
+
+        $disp_list = $request->disp_list;
+
+        if(empty($disp_list)) { // disp_list= が空値、またはURLになかった場合
+            $disp_list = 5; // デフォルトの表示件数をセット
+        }
+
+        $query = Item::paginate($disp_list);
         if (!empty($request->input('keyword'))) {
             $search_split = mb_convert_kana($request->input('keyword'), 's');
             $search_split2 = preg_split('/[\s]+/', $search_split);
@@ -149,6 +180,8 @@ class ItemController extends Controller
         $items = $query->get();
         return view('item.index')->with([
                 'items' => $items,
+                'pag_list'=>$pag_list,
+                'disp_list'=>$disp_list,
             ]);
     }
 
