@@ -227,6 +227,7 @@ class ItemController extends Controller
         if ($items->duplicates("id")->count() > 0) {
             throw new Exception("Error:idの重複:" . $items->duplicates("id")->shift());
         }
+        
 
         // 既存データとの重複チェック.pluckでDBに挿入したい$itemsのidのみ抽出
         $duplicateItem = DB::table('items')->whereIn('id', $items->pluck('id'))->get();
@@ -258,40 +259,54 @@ class ItemController extends Controller
 
     /**
      * CSVエクスポート
-     * 参考サイト：https://your-school.jp/laravel-csv-download/293/
+     * 参考サイト：https://suzumura-tumiage.com/laravel/338/
      */
-    public function export(Request $request)
+    public function export()
     {
-        $items = Item::all();
-        $now = Carbon::now();
-        $csvHeader = [
-            'id',
-            'ユーザー',
-            '名前',
-            '種別',
-            '詳細',
-            '価格',
-            '在庫数',
-            '登録日',
-            '更新日',
+        // ①HTTPヘッダーの設定
+        $headers = [
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => 'attachment;'
         ];
-        $csvData = $items->toArray();
 
-        $response = new StreamedResponse(function () use ($csvHeader, $csvData) {
-            $handle = fopen('php://output', 'w');
-            // 文字コードを変換して、文字化け回避
-            stream_filter_prepend($handle, 'convert.iconv.utf-8/cp932//TRANSLIT');
+        $fileName = Carbon::now()->format('YmdHis').'_itemList.csv';
 
-            fputcsv($handle, $csvHeader);
+        $callback = function()
+        {
+            // ②ストリームを作成してファイルに書き込めるようにする
+            $stream = fopen('php://output', 'w');
+            // ③CSVのヘッダ行の定義
+            $head = [
+                'id',
+                '商品名',
+                '種別',
+                '詳細',
+                '価格',
+                '在庫数',
+            ];
+            // ④UTF-8からSJISにフォーマットを変更してExcelの文字化け対策
+            mb_convert_variables('SJIS', 'UTF-8', $head);
+            fputcsv($stream, $head);
+            // ⑤データを取得してCSVファイルのデータレコードに顧客情報を挿入
+            $items = Item::orderBy('id', 'asc');
 
-            foreach ($csvData as $row) {
-                fputcsv($handle, $row);
+            foreach ($items->cursor() as $item) {
+                $data = [
+                    $item->id,
+                    $item->name,
+                    $item->type->name,
+                    $item->detail,
+                    $item->price,
+                    $item->stock,
+                ];
+
+                mb_convert_variables('SJIS', 'UTF-8', $data);
+                fputcsv($stream, $data);
             }
-            fclose($handle);
-        }, 200, [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename='.$now->format('YmdHis').'.csv',
-        ]);
-        return $response;
+
+            fclose($stream);
+        };
+
+        return response()->streamDownload($callback, $fileName, $headers);
     }
 }

@@ -135,35 +135,46 @@ class TypeController extends Controller
 
     /**
      * CSVエクスポート
-     * 参考サイト：https://your-school.jp/laravel-csv-download/293/
+     * 参考サイト：https://suzumura-tumiage.com/laravel/338/
      */
-    public function export(Request $request)
+    public function export()
     {
-        $items = Type::all();
-        $now = Carbon::now();
-        $csvHeader = [
-            'id',
-            '名前',
-            '登録日',
-            '更新日',
+        // ①HTTPヘッダーの設定
+        $headers = [
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => 'attachment;'
         ];
-        $csvData = $items->toArray();
 
-        $response = new StreamedResponse(function () use ($csvHeader, $csvData) {
-            $handle = fopen('php://output', 'w');
-            // 文字コードを変換して、文字化け回避
-            stream_filter_prepend($handle, 'convert.iconv.utf-8/cp932//TRANSLIT');
+        $fileName = Carbon::now()->format('YmdHis').'_typeList.csv';
 
-            fputcsv($handle, $csvHeader);
+        $callback = function()
+        {
+            // ②ストリームを作成してファイルに書き込めるようにする
+            $stream = fopen('php://output', 'w');
+            // ③CSVのヘッダ行の定義
+            $head = [
+                'id',
+                '種別',
+            ];
+            // ④UTF-8からSJISにフォーマットを変更してExcelの文字化け対策
+            mb_convert_variables('SJIS', 'UTF-8', $head);
+            fputcsv($stream, $head);
+            // ⑤データを取得してCSVファイルのデータレコードに顧客情報を挿入
+            $types = Type::orderBy('id', 'asc');
 
-            foreach ($csvData as $row) {
-                fputcsv($handle, $row);
+            foreach ($types->cursor() as $type) {
+                $data = [
+                    $type->id,
+                    $type->name,
+                ];
+
+                mb_convert_variables('SJIS', 'UTF-8', $data);
+                fputcsv($stream, $data);
             }
-            fclose($handle);
-        }, 200, [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename='.$now->format('YmdHis').'.csv',
-        ]);
-        return $response;
+
+            fclose($stream);
+        };
+
+        return response()->streamDownload($callback, $fileName, $headers);
     }
 }
