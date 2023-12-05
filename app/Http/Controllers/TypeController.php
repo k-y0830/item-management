@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Type;
+use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
 
 class TypeController extends Controller
@@ -105,9 +105,16 @@ class TypeController extends Controller
      */
     public function delete(Request $request, $id)
     {
-        $type = Type::where('id', '=', $id)->first();
-        $type->delete();
+        $type_id = Item::where('type_id', '=', $id)->first();
 
+        $type = Type::where('id', '=', $id)->first();
+
+        // ★TODO:エラー表示する
+        if (!empty($type_id)) {
+            echo '使用中のため削除出来ません';
+        } else {
+            $type->delete();
+        }
         return redirect('/type');
     }
 
@@ -116,8 +123,23 @@ class TypeController extends Controller
      */
     public function search(Request $request)
     {
+        $pag_list = [
+            0 => '5',
+            1 => '10',
+            2 => '100',
+            3 => '200',
+        ];
+
+        $disp_list = $request->disp_list;
+
+        if(empty($disp_list)) { // disp_list= が空値、またはURLになかった場合
+            $disp_list = 5; // デフォルトの表示件数をセット
+        }
+
         $query = Type::query();
-        if (!empty($request->input('keyword'))) {
+
+        $keyword = $request->input('keyword');
+        if (!empty($keyword)) {
             $search_split = mb_convert_kana($request->input('keyword'), 's');
             $search_split2 = preg_split('/[\s]+/', $search_split);
             foreach ($search_split2 as $keyword) {
@@ -125,10 +147,12 @@ class TypeController extends Controller
             }
         }
 
-        $type = $query->get();
+        $type = $query->paginate(5);
 
         return view('type.index')->with([
                 'type' => $type,
+                'pag_list'=>$pag_list,
+                'disp_list'=>$disp_list,
             ]);
     }
 

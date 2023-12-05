@@ -18,7 +18,7 @@
                             <div class="searchinput-group-append">
                                 <form action="{{ url('type/search') }}" method="GET" class="search-form">
                                     @csrf
-                                    <input type="search" name="keyword" placeholder="キーワード    複数検索可" class="search-box">
+                                    <input type="search" name="keyword" placeholder="キーワード" class="search-box">
                                     <button type="submit" class="btn btn-default search-btn">検索</button>
                                 </form>
                             </div>

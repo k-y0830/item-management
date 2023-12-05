@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
 
 class CompanyController extends Controller
@@ -120,21 +119,38 @@ class CompanyController extends Controller
      */
     public function search(Request $request)
     {
+        $pag_list = [
+            0 => '5',
+            1 => '10',
+            2 => '100',
+            3 => '200',
+        ];
+
+        $disp_list = $request->disp_list;
+
+        if(empty($disp_list)) { // disp_list= が空値、またはURLになかった場合
+            $disp_list = 5; // デフォルトの表示件数をセット
+        }
+
         $query = Company::query();
-        if (!empty($request->input('keyword'))) {
+
+        $keyword = $request->input('keyword');
+        if (!empty($keyword)) {
             $search_split = mb_convert_kana($request->input('keyword'), 's');
             $search_split2 = preg_split('/[\s]+/', $search_split);
             foreach ($search_split2 as $keyword) {
-                $query->Where('name', 'LIKE', "%$keyword%")
-                ->orWhere('address', 'LIKE', "%$keyword%")
-                ->orWhere('tell', 'LIKE', "%$keyword%");
+                $query->where('name', 'LIKE', "%{$keyword}%")
+                ->orwhere('address', 'LIKE', "%{$keyword}%")
+                ->orwhere('tell', 'LIKE', "%{$keyword}%");
             }
         }
 
-        $company = $query->get();
+        $company = $query->paginate(5);
 
         return view('company.index')->with([
                 'company' => $company,
+                'pag_list'=>$pag_list,
+                'disp_list'=>$disp_list,
             ]);
     }
 

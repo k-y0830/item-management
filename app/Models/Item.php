@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Type;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\DB;
 
 class Item extends Model
 {
