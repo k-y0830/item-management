@@ -56,7 +56,7 @@ class CompanyController extends Controller
         if ($request->isMethod('post')) {
             // バリデーション
             $this->validate($request, [
-                'name' => 'required|max:100',
+                'name' => 'required|max:100|unique:companies,name',
             ]);
 
             // 業者登録
@@ -91,7 +91,7 @@ class CompanyController extends Controller
     public function editregister(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|max:100|unique:companies,name',
         ]);
 
         $company = Company::where('id', '=', $id)->first();

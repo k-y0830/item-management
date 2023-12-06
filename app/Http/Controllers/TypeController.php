@@ -57,7 +57,7 @@ class TypeController extends Controller
         if ($request->isMethod('post')) {
             // バリデーション
             $this->validate($request, [
-                'name' => 'required|max:100',
+                'name' => 'required|max:100|unique:types,name',
             ]);
 
             // 種別登録
@@ -90,7 +90,7 @@ class TypeController extends Controller
     public function editregister(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|max:100|unique:types,name',
         ]);
 
         $type = Type::where('id', '=', $id)->first();
@@ -105,16 +105,16 @@ class TypeController extends Controller
      */
     public function delete(Request $request, $id)
     {
-        $type_id = Item::where('type_id', '=', $id)->first();
+        $items = Item::where('type_id', '=', $id)->get();
 
         $type = Type::where('id', '=', $id)->first();
 
-        // ★TODO:エラー表示する
-        if (!empty($type_id)) {
+        if (count($items) != 0) {
             echo '使用中のため削除出来ません';
         } else {
             $type->delete();
         }
+
         return redirect('/type');
     }
 

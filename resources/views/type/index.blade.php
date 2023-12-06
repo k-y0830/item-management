@@ -67,10 +67,12 @@
                                         </a>
                                     </td>
                                     <td>
+                                        @if (count($val->items) == 0)
                                         <form action="{{ url('/type/delete').$val->id }}" method="post" onsubmit="return window.confirm('削除しますか？')">
                                             @csrf
                                             <button type="submit" class="btn btn-default" id="deletebtn">削除</button>
                                         </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

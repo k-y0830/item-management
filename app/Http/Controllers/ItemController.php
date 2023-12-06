@@ -34,7 +34,7 @@ class ItemController extends Controller
             1 => '10',
             2 => '100',
             3 => '200',
-    ];
+        ];
 
         $disp_list = $request->disp_list;
 
@@ -60,26 +60,29 @@ class ItemController extends Controller
         $type = Type::all();
         if (count($type) == 0) {
             return view('type.add');
-        } else
+        } else {
+            // POSTリクエストのとき
+            if ($request->isMethod('post')) {
+                // バリデーション
+                $this->validate($request, [
+                    'name' => 'required|max:100',
+                    'type_id' => 'required',
+                    'price' => 'integer|nullable',
+                    'stock' => 'integer|nullable',
+                ]);
 
-        // POSTリクエストのとき
-        if ($request->isMethod('post')) {
-            // バリデーション
-            $this->validate($request, [
-                'name' => 'required|max:100',
-            ]);
+                // 商品登録
+                Item::create([
+                    'user_id' => Auth::user()->id,
+                    'name' => $request->name,
+                    'type_id' => $request->type_id,
+                    'detail' => $request->detail,
+                    'price' => $request->price,
+                    'stock' => $request->stock,
+                ]);
 
-            // 商品登録
-            Item::create([
-                'user_id' => Auth::user()->id,
-                'name' => $request->name,
-                'type_id' => $request->type_id,
-                'detail' => $request->detail,
-                'price' => $request->price,
-                'stock' => $request->stock,
-            ]);
-
-            return redirect('/items');
+                return redirect('/items');
+            }
         }
 
         return view('item.add')->with([
