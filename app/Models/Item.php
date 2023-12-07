@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Type;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Company;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Item extends Model
@@ -52,5 +54,9 @@ class Item extends Model
 
     public function company() {
         return $this->belongsTo(Company::class);
+    }
+
+    public function orders() {
+        return $this->hasMany(Order::class);
     }
 }

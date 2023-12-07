@@ -78,4 +78,22 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/export', [App\Http\Controllers\CompanyController::class, 'export']);
     });
 
+    // orders
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [App\Http\Controllers\OrderController::class, 'index']);
+        Route::get('/add', [App\Http\Controllers\OrderController::class, 'add']);
+        Route::post('/add', [App\Http\Controllers\OrderController::class, 'add']);
+        // 取得したIDの編集ページ表示
+        Route::get('/edit{id}', [App\Http\Controllers\OrderController::class, 'edit']);
+        // 取得したIDの商品編集
+        Route::post('/edit{id}', [App\Http\Controllers\OrderController::class, 'editregister']);
+        // 削除
+        Route::post('/delete{id}', [App\Http\Controllers\OrderController::class, 'delete']);
+        // 複数検索
+        Route::get('/search', [App\Http\Controllers\OrderController::class, 'search']);
+        // csv
+        Route::post('/import', [App\Http\Controllers\OrderController::class, 'import']);
+        Route::get('/export', [App\Http\Controllers\OrderController::class, 'export']);
+    });
+
 });

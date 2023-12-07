@@ -72,6 +72,8 @@
                                             @csrf
                                             <button type="submit" class="btn btn-default" id="deletebtn">削除</button>
                                         </form>
+                                        @else
+                                            <p>※マスタ使用中</p>
                                         @endif
                                     </td>
                                 </tr>

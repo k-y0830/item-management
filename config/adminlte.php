@@ -308,6 +308,12 @@ return [
             'icon' => 'fas fa-gamepad',
         ],
 
+        [
+            'text' => '発注',
+            'url'  => 'orders',
+            'icon' => 'fas fa-gamepad',
+        ],
+
         // AdminLTEデフォルト
         /*
         // Navbar items:
