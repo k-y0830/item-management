@@ -24,19 +24,29 @@
                     @csrf
                     <div class="card-body">
 
-                        <!-- 業者一覧でforeach -->
+                        <!-- ★業者一覧でforeach -->
                         <div class="form-group">
                             <label for="company">業者</label><br>
                                 <select name="company_id" class="form-control">
-                                @foreach($company as $val)
-                                    <option value="{{ $val->id }}"  @if($val->id==$item->type_id) selected @endif>{{ $val->name }}</option>
+                                @foreach ($company as $val)
+                                    <option value="{{ $val->id }}" selected>{{ $val->name }}</option>
                                 @endforeach
+                                </select>
+                        </div>
+
+                        <!-- ★商品一覧でforeach -->
+                        <div class="form-group">
+                            <label for="item">商品</label><br>
+                                <select name="item_id" class="form-control">
+                                    @foreach ($item as $val)
+                                        <option value="{{ $val->id }}" selected>{{ $val->name }}</option>
+                                    @endforeach
                                 </select>
                         </div>
 
                         <div class="form-group">
                             <label for="order">発注数</label>
-                            <input type="text" class="form-control" id="detail" name="detail" value="{{ old('detail') }}" placeholder="詳細説明">
+                            <input type="text" class="form-control" id="detail" name="detail" value="{{ $order->order }}">
                         </div>
 
                     <div class="card-footer">

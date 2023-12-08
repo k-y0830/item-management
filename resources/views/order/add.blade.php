@@ -27,6 +27,7 @@
                         <!-- 業者一覧でforeach -->
                         <div class="form-group">
                             <label for="company">業者</label><br>
+                                <select name="company_id" class="form-control">
                                     @foreach ($company as $val)
                                         @if (!is_null(old('company_id')))
                                             <!-- バリデーションエラー等による再表示時 -->
@@ -43,9 +44,24 @@
                                 </select>
                         </div>
 
+                        <!-- 商品一覧でforeach -->
                         <div class="form-group">
-                            <label for="order_item">商品名</label>
-                            <input type="text" class="form-control" id="order_item" name="order_item" value="{{ old('order_item') }}" placeholder="">
+                            <label for="item">商品</label><br>
+                                <select name="item_id" class="form-control">
+                                    @foreach ($item as $val)
+                                        @if (!is_null(old('item_id')))
+                                            <!-- バリデーションエラー等による再表示時 -->
+                                            @if ($val->id == old('item_id'))
+                                                <option  value="{{ $val->id }}" selected>{{ $val->name }}</option>
+                                            @else
+                                                <option  value="{{ $val->id }}">{{ $val->name }}</option>
+                                            @endif
+                                        @else
+                                            <!-- 初期表示時 -->
+                                            <option  value="{{ $val->id }}" @if( old($val->id) == $val->id ) selected @endif>{{ $val->name }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
                         </div>
 
                         <div class="form-group">

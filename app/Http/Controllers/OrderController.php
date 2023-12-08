@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Item;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +59,8 @@ class OrderController extends Controller
     public function add(Request $request)
     {
         $company = Company::all();
+        $item = Item::all();
+        
         if (count($company) == 0) {
             return view('company.add');
         } else {
@@ -65,16 +68,16 @@ class OrderController extends Controller
             if ($request->isMethod('post')) {
                 // バリデーション
                 $this->validate($request, [
+                    'item_id' => 'required',
                     'company_id' => 'required',
-                    'order_item' => 'required',
                     'order' => 'required|integer',
                 ]);
 
                 // 発注登録
                 Order::create([
                     'user_id' => Auth::user()->id,
+                    'item_id' => $request->item_id,
                     'company_id' => $request->company_id,
-                    'order_item' => $request->order_item,
                     'order' => $request->order,
                 ]);
 
@@ -83,6 +86,7 @@ class OrderController extends Controller
         }
         return view('order.add')->with([
             'company' => $company,
+            'item' => $item,
         ]);
     }
 
@@ -92,12 +96,13 @@ class OrderController extends Controller
     public function edit($id)
     {
         $company = Company::all();
-
+        $item = Item::all();
         $order = Order::where('id', '=', $id)->first();
 
         return view('order.edit')->with([
-            'order' => $order,
+            'item' => $item,
             'company' => $company,
+            'order' => $order,
         ]);
     }
 
@@ -106,14 +111,12 @@ class OrderController extends Controller
      */
     public function editregister(Request $request, $id)
     {
-        $company = Company::all();
-
+        
         $request->validate([
-            'oeder' => 'required',
         ]);
 
         $order = Order::where('id', '=', $id)->first();
-        $order->order_stock = $request->order_stock;
+        $order->item_id = $request->item_id;
         $order->company_id = $request->company_id;
         $order->order = $request->order;
         $order->save();
@@ -195,9 +198,10 @@ class OrderController extends Controller
             $head = [
                 'id',
                 'ユーザー',
-                '在庫数',
+                '商品名',
                 '業者',
                 '発注数',
+                '発注日',
             ];
             // ④UTF-8からSJISにフォーマットを変更してExcelの文字化け対策
             mb_convert_variables('SJIS', 'UTF-8', $head);
@@ -209,9 +213,10 @@ class OrderController extends Controller
                 $data = [
                     $order->id,
                     $order->user->name,
-                    $order->item_stock,
+                    $order->item->name,
                     $order->company->name,
                     $order->order,
+                    $order->created_at,
                 ];
 
                 mb_convert_variables('SJIS', 'UTF-8', $data);

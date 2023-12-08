@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned()->index();
-            $table->integer('item_stock')->nullable()->unsigned();
+            $table->integer('item_id')->nullable()->unsigned();
             $table->integer('company_id')->nullable()->unsigned();
-            $table->string('order_item');
             $table->integer('order');
             $table->timestamps();
         });

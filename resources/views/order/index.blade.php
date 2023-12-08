@@ -66,7 +66,7 @@
                                         <td>{{ $order->id }}</td>
                                         <td>{{ $order->user->name }}</td>
                                         <td>{{ $order->company->name }}</td>
-                                        <td>{{ $order->order_item }}</td>
+                                        <td>{{ $order->item->name }}</td>
                                         <td>{{ $order->order }}</td>
                                         <td>{{ $order->created_at }}</td>
                                         <td>
