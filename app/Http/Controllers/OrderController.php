@@ -91,40 +91,6 @@ class OrderController extends Controller
     }
 
     /**
-     * 編集ページ表示
-     */
-    public function edit($id)
-    {
-        $company = Company::all();
-        $item = Item::all();
-        $order = Order::where('id', '=', $id)->first();
-
-        return view('order.edit')->with([
-            'item' => $item,
-            'company' => $company,
-            'order' => $order,
-        ]);
-    }
-
-    /**
-     * 編集登録
-     */
-    public function editregister(Request $request, $id)
-    {
-        
-        $request->validate([
-        ]);
-
-        $order = Order::where('id', '=', $id)->first();
-        $order->item_id = $request->item_id;
-        $order->company_id = $request->company_id;
-        $order->order = $request->order;
-        $order->save();
-
-        return redirect('/orders');
-    }
-
-    /**
      * 削除
      */
     public function delete(Request $request, $id)
@@ -164,6 +130,12 @@ class OrderController extends Controller
             $search_split2 = preg_split('/[\s]+/', $search_split);
             foreach ($search_split2 as $keyword) {
                 $query->where('order', 'LIKE', "%{$keyword}%")
+                ->orwhereHas('user', function ($query) use ($keyword) {
+                    $query->where('name', 'LIKE', "%{$keyword}%");
+                })
+                ->orwhereHas('item', function ($query) use ($keyword) {
+                    $query->where('name', 'LIKE', "%{$keyword}%");
+                })
                 ->orwhereHas('company', function ($query) use ($keyword) {
                     $query->where('name', 'LIKE', "%{$keyword}%");
                 })->get();
@@ -212,9 +184,9 @@ class OrderController extends Controller
             foreach ($orders->cursor() as $order) {
                 $data = [
                     $order->id,
-                    $order->user->name,
-                    $order->item->name,
-                    $order->company->name,
+                    $order->user->name ?? '△削除済',
+                    $order->item->name ?? '△削除済',
+                    $order->company->name ?? '△削除済',
                     $order->order,
                     $order->created_at,
                 ];

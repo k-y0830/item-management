@@ -66,7 +66,7 @@ class ItemController extends Controller
                 // バリデーション
                 $this->validate($request, [
                     'name' => 'required|max:100',
-                    'type_id' => 'required',
+                    'type_id' => 'nullable',
                     'price' => 'integer|nullable',
                     'stock' => 'integer|nullable',
                 ]);
@@ -252,11 +252,6 @@ class ItemController extends Controller
         }
     }
 
-    // public function import(Request $request)
-    // {
-    //     // https://blog.capilano-fw.com/?p=5022
-    // }
-
     /**
      * CSVエクスポート
      * 参考サイト：https://suzumura-tumiage.com/laravel/338/
@@ -294,7 +289,7 @@ class ItemController extends Controller
                 $data = [
                     $item->id,
                     $item->name,
-                    $item->type->name,
+                    $item->type->name ?? '',
                     $item->detail,
                     $item->price,
                     $item->stock,

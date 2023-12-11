@@ -46,6 +46,7 @@
                         <div class="form-group">
                             <label for="type">種別</label><br>
                                 <select name="type_id" class="form-control">
+                                    <option  value="" selected></option>
                                     @foreach ($type as $val)
                                         @if (!is_null(old('type_id')))
                                             <!-- バリデーションエラー等による再表示時 -->

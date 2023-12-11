@@ -32,6 +32,7 @@
                         <div class="form-group">
                             <label for="type">種別</label><br>
                                 <select name="type_id" class="form-control">
+                                    <option value="" selected></option>
                                 @foreach($type as $val)
                                     <option value="{{ $val->id }}"  @if($val->id==$item->type_id) selected @endif>{{ $val->name }}</option>
                                 @endforeach

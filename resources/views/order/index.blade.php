@@ -64,16 +64,11 @@
                                 @foreach ($orders as $order)
                                     <tr>
                                         <td>{{ $order->id }}</td>
-                                        <td>{{ $order->user->name }}</td>
-                                        <td>{{ $order->company->name }}</td>
-                                        <td>{{ $order->item->name }}</td>
+                                        <td>{{ $order->user->name ?? '△削除ユーザー' }}</td>
+                                        <td>{{ $order->company->name ?? '△削除業者' }}</td>
+                                        <td>{{ $order->item->name ?? '△削除商品' }}</td>
                                         <td>{{ $order->order }}</td>
                                         <td>{{ $order->created_at }}</td>
-                                        <td>
-                                            <a href="{{ url('orders/edit').$order->id }}">
-                                                <button class="btn btn-default">編集</button>
-                                            </a>
-                                        </td>
                                         <td>
                                             <form action="{{ url('/orders/delete').$order->id }}" method="post" onsubmit="return window.confirm('削除しますか？')">
                                                 @csrf

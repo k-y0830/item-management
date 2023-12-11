@@ -65,7 +65,7 @@
                                     <tr>
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->name }}</td>
-                                        <td>{{ $item->type->name }}</td>
+                                        <td>{{ $item->type->name ?? '' }}</td>
                                         <td>{{ $item->detail }}</td>
                                         <td>{{ $item->price }}</td>
                                         <td>{{ $item->stock }}</td>

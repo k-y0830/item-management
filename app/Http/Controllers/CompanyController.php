@@ -91,7 +91,7 @@ class CompanyController extends Controller
     public function editregister(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|max:100|unique:companies,name',
+            'name' => 'required|max:100',
         ]);
 
         $company = Company::where('id', '=', $id)->first();
