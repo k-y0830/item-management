@@ -140,7 +140,7 @@ class TypeController extends Controller
 
         $keyword = $request->input('keyword');
         if (!empty($keyword)) {
-            $search_split = mb_convert_kana($request->input('keyword'), 's');
+            $search_split = mb_convert_kana($keyword, 's');
             $search_split2 = preg_split('/[\s]+/', $search_split);
             foreach ($search_split2 as $keyword) {
                 $query->Where('name', 'LIKE', "%$keyword%");

@@ -143,6 +143,7 @@ class ItemController extends Controller
     /**
      * 複数検索
      * 参考サイト:https://qiita.com/EasyCoder/items/83475abb6d6acb3a177f
+     * 参考サイト:https://prglog.info/home/?p=649
      */
     public function search(Request $request)
     {
@@ -164,12 +165,15 @@ class ItemController extends Controller
 
         /* キーワードから検索処理 */
         $keyword = $request->input('keyword');
+
         if(!empty($keyword)) {
-            $search_split = mb_convert_kana($request->input('keyword'), 's');
+            $search_split = mb_convert_kana($keyword, 's');
             $search_split2 = preg_split('/[\s]+/', $search_split);
             foreach ($search_split2 as $keyword) {
-                $query->where('name', 'LIKE', "%{$keyword}%")
-                ->orwhere('detail', 'LIKE', "%{$keyword}%")
+                $query->whereIn('name', 'LIKE', "%{$keyword}%")
+                ->orWhereHas(function ($query) use ($keyword) {
+                    $query->whereIn('detail', 'LIKE', "%{$keyword}%");
+                })
                 ->orwhereHas('type', function ($query) use ($keyword) {
                     $query->where('name', 'LIKE', "%{$keyword}%");
                 })->get();
