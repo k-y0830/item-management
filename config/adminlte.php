@@ -296,6 +296,24 @@ return [
             'icon' => 'fas fa-gamepad',
         ],
 
+        [
+            'text' => '種別マスタ管理',
+            'url'  => 'type',
+            'icon' => 'fas fa-gamepad',
+        ],
+
+        [
+            'text' => '業者管理',
+            'url'  => 'company',
+            'icon' => 'fas fa-gamepad',
+        ],
+
+        [
+            'text' => '発注',
+            'url'  => 'orders',
+            'icon' => 'fas fa-gamepad',
+        ],
+
         // AdminLTEデフォルト
         /*
         // Navbar items:

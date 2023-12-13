@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', '商品一覧')
+@section('title', '発注一覧')
 
 @section('content_header')
-    <h1>商品一覧</h1>
+    <h1>発注一覧</h1>
 @stop
 
 @section('content')
@@ -16,7 +16,7 @@
                         <div class="searchcard-tools">
                             <div class="searchinput-group">
                                 <div class="searchinput-group-append">
-                                    <form action="{{ url('items/search') }}" method="GET" class="search-form">
+                                    <form action="{{ url('orders/search') }}" method="GET" class="search-form">
                                         @csrf
                                         <input type="search" name="keyword" placeholder="キーワード    複数検索可" class="search-box">
                                         <button type="submit" class="btn btn-default search-btn">検索</button>
@@ -29,11 +29,11 @@
             </div>
 
             <!-- CSV -->
-            <form method="GET" action="{{ url('items/export') }}" class="export-btn">
+            <form method="GET" action="{{ url('orders/export') }}" class="export-btn">
                 <button type="submit" class="btn btn-default">CSVダウンロード</button>
             </form>
 
-            <!-- 商品一覧 -->
+            <!-- 発注一覧 -->
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
@@ -41,7 +41,7 @@
                         <div class="card-tools">
                             <div class="input-group input-group-sm">
                                 <div class="input-group-append">
-                                    <a href="{{ url('items/add') }}" class="btn btn-default">商品登録</a>
+                                    <a href="{{ url('orders/add') }}" class="btn btn-default">発注登録</a>
                                 </div>
                             </div>
                         </div>
@@ -51,31 +51,26 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>名前</th>
-                                    <th>種別</th>
-                                    <th>詳細</th>
-                                    <th>価格</th>
-                                    <th>在庫数</th>
+                                    <th>ユーザー名</th>
+                                    <th>業者名</th>
+                                    <th>商品名</th>
+                                    <th>発注数</th>
+                                    <th>発注日</th>
                                     <th>&nbsp;</th>
                                     <th>&nbsp;</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($items as $item)
+                                @foreach ($orders as $order)
                                     <tr>
-                                        <td>{{ $item->id }}</td>
-                                        <td>{{ $item->name }}</td>
-                                        <td>{{ $item->type->name ?? '' }}</td>
-                                        <td>{{ $item->detail }}</td>
-                                        <td>{{ $item->price }}</td>
-                                        <td>{{ $item->stock }}</td>
+                                        <td>{{ $order->id }}</td>
+                                        <td>{{ $order->user->name ?? '△削除ユーザー' }}</td>
+                                        <td>{{ $order->company->name ?? '△削除業者' }}</td>
+                                        <td>{{ $order->item->name ?? '△削除商品' }}</td>
+                                        <td>{{ $order->order }}</td>
+                                        <td>{{ $order->created_at }}</td>
                                         <td>
-                                            <a href="{{ url('items/edit').$item->id }}">
-                                                <button class="btn btn-default">編集</button>
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <form action="{{ url('/items/delete').$item->id }}" method="post" onsubmit="return window.confirm('削除しますか？')">
+                                            <form action="{{ url('/orders/delete').$order->id }}" method="post" onsubmit="return window.confirm('削除しますか？')">
                                                 @csrf
                                                 <button type="submit" class="btn btn-default" id="deletebtn">削除</button>
                                             </form>
@@ -91,10 +86,10 @@
             <!-- 件数表示 -->
             <div class="number-form-group">
                 <div class="number-count mb-2 xl:w-66">
-                @if (count($items) >0)
-                    <p>全{{ $items->total() }}件中 
-                        {{  ($items->currentPage() -1) * $items->perPage() + 1}} - 
-                        {{ (($items->currentPage() -1) * $items->perPage() + 1) + (count($items) -1)  }}件
+                @if (count($orders) >0)
+                    <p>全{{ $orders->total() }}件中 
+                        {{  ($orders->currentPage() -1) * $orders->perPage() + 1}} - 
+                        {{ (($orders->currentPage() -1) * $orders->perPage() + 1) + (count($orders) -1)  }}件
                     </p>
                 @else
                     <p>データがありません。</p>
@@ -114,7 +109,7 @@
                 </div>
             </div>
             <div class="page">
-                {{ $items->appends(request()->query())->links() }}
+                {{ $orders->appends(request()->query())->links() }}
             </div>
         </div>
 @stop
