@@ -144,6 +144,7 @@ class ItemController extends Controller
      * 複数検索
      * 参考サイト:https://qiita.com/EasyCoder/items/83475abb6d6acb3a177f
      * 参考サイト:https://prglog.info/home/?p=649
+     * 参考サイト:https://qiita.com/yuta_sawamura/items/691818b3de5b87432ac9
      */
     public function search(Request $request)
     {
