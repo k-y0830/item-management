@@ -139,9 +139,12 @@ class CompanyController extends Controller
             $search_split = mb_convert_kana($keyword, 's');
             $search_split2 = preg_split('/[\s]+/', $search_split);
             foreach ($search_split2 as $keyword) {
-                $query->where('name', 'LIKE', "%{$keyword}%")
-                ->orwhere('address', 'LIKE', "%{$keyword}%")
-                ->orwhere('tell', 'LIKE', "%{$keyword}%");
+                $query->where(function ($query) use ($keyword) {
+                    $query->where('name', 'LIKE', "%{$keyword}%")
+                    ->orWhere('address', 'LIKE', "%{$keyword}%")
+                    ->orWhere('tell', 'LIKE', "%{$keyword}%")
+                    ->get();
+                });
             }
         }
 

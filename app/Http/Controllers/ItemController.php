@@ -170,13 +170,13 @@ class ItemController extends Controller
             $search_split = mb_convert_kana($keyword, 's');
             $search_split2 = preg_split('/[\s]+/', $search_split);
             foreach ($search_split2 as $keyword) {
-                $query->whereIn('name', 'LIKE', "%{$keyword}%")
-                ->orWhereHas(function ($query) use ($keyword) {
-                    $query->whereIn('detail', 'LIKE', "%{$keyword}%");
-                })
-                ->orwhereHas('type', function ($query) use ($keyword) {
-                    $query->where('name', 'LIKE', "%{$keyword}%");
-                })->get();
+                $query->where(function ($query) use ($keyword) {
+                    $query->where('name', 'LIKE', "%{$keyword}%")
+                    ->orWhere('detail', 'LIKE', "%{$keyword}%")
+                    ->orwhereHas('type', function ($query) use ($keyword) {
+                        $query->where('name', 'LIKE', "%{$keyword}%");
+                    })->get();
+                });
             }
         }
 
